@@ -1,0 +1,6 @@
+{
+    "a":{
+        "gtfd": "hgf"
+    }
+}
+console.log(a.gtfd);
