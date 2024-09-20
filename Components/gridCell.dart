@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 
 class gridCell extends StatefulWidget {
   final String name;
-  const gridCell({ required this.name});
-
+  final Color backGroundClour;
+  const gridCell({ required this.name, this.backGroundClour=const Color.fromARGB(255, 242, 254, 255)});
   @override
   State<gridCell> createState() => _gridCellState();
 }
@@ -14,7 +14,7 @@ class _gridCellState extends State<gridCell> {
   Widget build(BuildContext context) {
     return Container(
       decoration:BoxDecoration(
-        color:Color.fromARGB(255, 242, 254, 255),
+        color:widget.backGroundClour,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: Color.fromARGB(255, 70, 70, 70),

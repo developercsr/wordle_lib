@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'keys.dart';
+import 'package:sw/wordManaement/listOfWords.dart';
+import 'package:provider/provider.dart';
 class keyBoard extends StatefulWidget {
   @override
   State<keyBoard> createState() => _keysBoardState();
@@ -26,7 +28,8 @@ class _keysBoardState extends State<keyBoard> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height*0.3;
     double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
+    return Consumer<Listofwords>(
+      builder: ((context,listofWords_,child)=>Scaffold(
       body: ListView(
         physics:const NeverScrollableScrollPhysics(),
         children: [
@@ -55,27 +58,27 @@ class _keysBoardState extends State<keyBoard> {
                   width: screenWidth*0.2,
                   child: TextButton(
                     onPressed: (){keyBoardChange();}
-                    ,child:const Icon(Icons.pan_tool)),
+                    ,child:const Icon(Icons.keyboard_double_arrow_up_sharp)),
                 ),
-               Container(
-                  height : screenHeight*0.2,
-                  width: screenWidth*0.2,
-                  child: TextButton(onPressed: (){}, child:const Text("<>")),
-              ),
               Container(
                    height : screenHeight*0.2,
                   width: screenWidth*0.2,
                   child: TextButton(
-                    onPressed: (){}
+                    onPressed: (){listofWords_.checkthewords();}
                     ,child:const Icon(Icons.check_box_rounded)),
                 ),
+                Container(
+                  height : screenHeight*0.2,
+                  width: screenWidth*0.2,
+                  child: TextButton(onPressed: (){listofWords_.removelastEntry();}, child:Icon(Icons.highlight_remove)),
+              ),
                 ],                    
               ),
             ),],
         ),
         ],
       ),
-    );
+    )));
   }
   Widget buildHorizontalList(List<String> items, double screenHeight, double screenWidth)
   {
