@@ -1,6 +1,6 @@
 //This is just a test code. The same code is in the working program.
 import "dart:io";
-returnCorrectWordParts() async
+Future<List<String>> returnCorrectWordParts() async
   {
     List<String> vowels=['अ', 'आ', 'इ', 'ई', 'उ', 'ऊ','ऋ','ए','ऐ','ओ','औ', 'अं', 'अः'];
     List<String> consonants=['क', 'ख', 'ग', 'घ', 'ङ','च', 'छ', 'ज', 'झ', 'ञ','ट', 'ठ', 'ड','ढ', 'ण','त', 'थ', 'द', 'ध', 'न','प', 'फ', 'ब', 'भ', 'म','य','र', 'ल', 'व', 'श', 'ष', 'स', 'ह','क्ष', 'त्र', 'ज्ञ'];
@@ -9,6 +9,7 @@ returnCorrectWordParts() async
     String correctone="अधिकारक्षेत्र";
     List<String> correctoneParts=correctone.split("");
     List<int> removeOttu=[];
+    List<String> wordNotSplitted=[];
     for(int i=0;i<correctoneParts.length;i++)
     {
       if(correctoneParts[i]=="्")
@@ -81,10 +82,21 @@ returnCorrectWordParts() async
         print("something else!");
       }
     }
-    print(correctWord);
-  }
+    for(List<String> i in correctWord)
+    {
+      String fullletter= "";
+      for(String k in i)
+      {
+        fullletter+=k;
+      }
+      wordNotSplitted.add(fullletter);
+    }
+    return wordNotSplitted;
+}
 void main() async
 {
+  List<String> mm=await returnCorrectWordParts();
+  print(mm);
   // String a="""print("क्ष".split(""));
   // print("त्र".split(""));
   // print("ज्ञ".split(""));""";
@@ -93,5 +105,4 @@ void main() async
   // String Out2="त्र".split("").toString();
   // String Out3="ज्ञ".split("").toString();
   // await doubt.writeAsString(a+"\n"+Out1+"\n"+Out2+"\n"+Out3+"\n");
-  returnCorrectWordParts();
 }
