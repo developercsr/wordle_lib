@@ -132,13 +132,13 @@ class Listofwords extends ChangeNotifier
     gridcellForming();
   }
 
-  Future<void> get_word() async
-  {
-    var url="http://127.0.0.1:5555/wordoftheday";
-    var response=await  http.get(Uri.parse(url));
-    final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-    print(jsonResponse["word_of_day"]=="नमस्ते");
-  }
+  // Future<void> get_word() async
+  // {
+  //   var url="http://127.0.0.1:5555/wordoftheday";
+  //   var response=await  http.get(Uri.parse(url));
+  //   final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+  //   print(jsonResponse["word_of_day"]=="नमस्ते");
+  // }
 
   addWordsandLetters(String entry) async 
   {
