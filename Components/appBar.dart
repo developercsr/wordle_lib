@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sw/Components/profileIcon.dart';
 import 'lengthSet.dart';
-
-class AppBar1 extends StatefulWidget implements PreferredSizeWidget {
+import 'package:sw/Components/hintIcons.dart';
+import 'package:sw/Components/resetmidddleOfGame.dart';
+class AppBar1 extends StatefulWidget implements PreferredSizeWidget
+{
   const AppBar1({super.key});
-
   @override
   State<AppBar1> createState() => _AppBar1State();
   @override
@@ -29,17 +30,20 @@ class _AppBar1State extends State<AppBar1>{
           ),
           backgroundColor:const Color.fromARGB(255, 253, 161, 25),
           centerTitle: false,
-
           title:Text("शब्दजाल",style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
-          actions:const  [
+          actions: [
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 20.0),
-            
+              padding:  EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text("Word Length : "),
                   lengthOfWordSetState(),
+                  SizedBox(width: 50,),
+                  // TextButton(onPressed: restartInmiddle(context), child: Text("RESET")),
+                  IconButton(onPressed: (){restartInmiddle(context);}, icon: Icon(Icons.restart_alt),tooltip: "Reset the Game",),
+                  SizedBox(width: 50,),
+                  hintBox(),
                   SizedBox(width: 50,),
                   profileIcon()
                 ],

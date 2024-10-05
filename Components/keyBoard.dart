@@ -64,7 +64,7 @@ class _keysBoardState extends State<keyBoard> {
                    height : screenHeight*0.2,
                   width: screenWidth*0.2,
                   child: TextButton(
-                    onPressed: (){listofWords_.checkthewords();}
+                    onPressed: (){listofWords_.checkthewords(context);}
                     ,child:const Icon(Icons.check_box_rounded)),
                 ),
                 Container(

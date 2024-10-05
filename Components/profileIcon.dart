@@ -10,6 +10,6 @@ class profileIcon extends StatefulWidget {
 class _profileIconState extends State<profileIcon> {
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.person_2_rounded);
+    return IconButton(icon:Icon(Icons.person_2_rounded),onPressed: (){},tooltip: "my details",);
   }
 }

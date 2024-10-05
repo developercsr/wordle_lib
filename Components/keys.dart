@@ -19,7 +19,7 @@ class _KeysState extends State<Keys>
       builder: ((context,listOfWoreds_,child) =>InkWell(
         onTap:()
             {
-              listOfWoreds_.addWordsandLetters(widget.child);
+              listOfWoreds_.addWordsandLetters(context,widget.child);
             },
           child: Container(
             width: (widget.widthOf*0.95),
