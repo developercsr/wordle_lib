@@ -4,6 +4,7 @@ import 'package:sw/Components/profileIcon.dart';
 import 'lengthSet.dart';
 import 'package:sw/Components/hintIcons.dart';
 import 'package:sw/Components/resetmidddleOfGame.dart';
+import 'package:sw/Components/report.dart';
 class AppBar1 extends StatefulWidget implements PreferredSizeWidget
 {
   const AppBar1({super.key});
@@ -45,7 +46,9 @@ class _AppBar1State extends State<AppBar1>{
                   SizedBox(width: 50,),
                   hintBox(),
                   SizedBox(width: 50,),
-                  profileIcon()
+                  profileIcon(),
+                  SizedBox(width: 50,),
+                  IconButton(onPressed:(){reporting();}, icon: Icon(Icons.report)),
                 ],
               ),
             )
