@@ -18,12 +18,25 @@ class _gridCellState extends State<gridCell> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: Color.fromARGB(255, 70, 70, 70),
-          width: 4,
+          width: 4, 
         ),
       ),
-      child: Center(child: Text(widget.name,style: TextStyle(color: Colors.deepOrangeAccent,
-      fontSize: 22,
-      fontWeight: FontWeight.bold),
-            ),));
+      child: LayoutBuilder(
+          builder: (context, constraints) {
+            double fontSize = constraints.maxWidth * 0.25;
+            return Container(
+                child: Center(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      widget.name,
+                      style: TextStyle(fontSize: fontSize,color: Colors.orange,fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+            );
+          },
+        ),
+            );
   }
 }

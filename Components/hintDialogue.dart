@@ -5,15 +5,20 @@ Future<void> showMyDialogofHints(BuildContext context) async {
   int wordlength=pref.getInt("wordlength")??0;
   String wordnumKey="wordnum"+wordlength.toString();
   int wordnum=pref.getInt(wordnumKey)??0;
+  String letternumKey="letternum"+wordlength.toString();
+  bool ischecked = pref.getBool("isChecked")??false;
+  int letternum=pref.getInt(letternumKey)??0;
   String hint1 = "";
-  print(wordnum);
-  if (wordnum == 0) {
+  if (wordnum==0 && (ischecked==false))
+  {
     hint1 = "Please try at least one word before we give the hint";
-  } else {
+  }
+  else if(wordnum!=0 ||(letternum==wordlength-1 && ischecked==true)) {
     hint1 = "This is Hint1";
     pref.setBool("hint1used", true);
     pref.setInt("hint1atword", wordnum);
   }
+  else {}
   String _dialogText=hint1;
                   
   return showDialog<void>(
@@ -39,12 +44,17 @@ Future<void> showMyDialogofHints(BuildContext context) async {
                   int wordlength=pref.getInt("wordlength")??0;
                   String wordnumKey="wordnum"+wordlength.toString();
                   int wordnum=pref.getInt(wordnumKey)??0;
+                  String letternumKey="letternum"+wordlength.toString();
+                  bool ischecked = pref.getBool("isChecked")??false;
+                  int letternum=pref.getInt(letternumKey)??0;
                   String hint2 = "";
                   bool ishint1used = pref.getBool("hint1used") ?? false;
-                  if (ishint1used && hint1usedat != wordnum) {
-                    hint2 = "Only After Hint 1 and you should complete at least a word check to use hint2 ";
-                  } else {
+                  if (ishint1used && ((hint1usedat!=wordnum)||(letternum==wordlength-2 && ischecked==true)))
+                  {
                     hint2 = "This is Hint2";
+                    pref.setBool("hint2isused", true);
+                  } else {
+                    hint2 = "Only After Hint 1 and you should complete at least a word check to use hint2 ";
                   }
                   setState(() {
                     _dialogText = hint2;

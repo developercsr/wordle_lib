@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:sw/Components/gridCell.dart';
 import 'package:sw/Components/winningDialogue.dart';
 import 'package:sw/Components/SnakBar.dart';
@@ -65,14 +64,8 @@ class Listofwords extends ChangeNotifier
       }
       formedCells.add(purposeList);
     }
-    // print("The wordslists Key are : "+wordslistKey.toString());
-    // print("The Words are : "+wordslists.toString());
     displayGridCells=formedCells;
     app_ready=true;
-    // print(letternumKey);
-    // print(wordnumKey);
-    // print(letternum);
-    // print(wordnum);
     colorGen();
     notifyListeners();
   }
@@ -80,8 +73,6 @@ class Listofwords extends ChangeNotifier
   List<List<Color>> colorGen({int wordlength=3}) 
   {
     List<List<Color>> colorsOfCells = List.generate(6,(_) => List.generate(wordlength, (_) =>const Color.fromARGB(255, 242, 254, 255)),);
-    // print(colorsOfCellsKey);
-    // print(colorsOfCells);
     return colorsOfCells;
   }
 
@@ -109,6 +100,8 @@ class Listofwords extends ChangeNotifier
       isgotAnswer5=false;
       pres.setBool("isgotAnswer5", false);
     }
+    pres.setBool("hint1used", false);
+    pres.setInt("hint1atword", 0);
     if(wordslists3==""){pres.setString("wordslist3", jsonEncode([["","",""],["","",""],["","",""],["","",""],["","",""],["","",""]]));}
     if(wordslists4==""){pres.setString("wordslist4", jsonEncode([["","","",""],["","","",""],["","","",""],["","","",""],["","","",""],["","","",""]]));}
     if(wordslists5==""){pres.setString("wordslist5", jsonEncode([["","","","",""],["","","","",""],["","","","",""],["","","","",""],["","","","",""],["","","","",""]]));}
@@ -122,15 +115,10 @@ class Listofwords extends ChangeNotifier
     if(colorsOfCells4==""){pres.setString("colorsOfCells4", jsonEncode(colorValues4));}
     if(colorsOfCells5==""){pres.setString("colorsOfCells5", jsonEncode(colorValues5));}
     bool? isCheckedtry=pres.getBool("isChecked");
-    print("Snack Bar is Called!");
     if(isCheckedtry==null)
     {
       pres.setBool("isChecked", false);
     }
-    // print("Namaste!");
-    // String c1=pres.getString("colorsOfCells3")??"";
-    // List<dynamic> decoded = jsonDecode(c1);
-    // List<List<Color>> colorList = decoded.map<List<Color>>((row) => row.map<Color>((colorValue) => Color(colorValue)).toList()).toList();
     int? wordlength=pres.getInt("wordlength")??3;
     pres.setString("correctString3", "नमस्ते");
     pres.setString("correctString4", "कास्टेफाली");
@@ -184,8 +172,6 @@ class Listofwords extends ChangeNotifier
     gridcellForming();
     notifyListeners();
     //checking purpose
-    List<String> mywords=prefs.getStringList("allentries3")??[];
-    print(mywords);
   }
 
   Future<void> chagingwordlength(int new_length) async
@@ -218,7 +204,6 @@ class Listofwords extends ChangeNotifier
 
   entryIsOvwel(context,String entry,int wordnum,int letternum) async
   {
-    print(123);
     SharedPreferences prefs=await SharedPreferences.getInstance();
     int wordlength=prefs.getInt("wordlength")??0;
     String last=wordslists[wordnum][letternum];
@@ -228,34 +213,25 @@ class Listofwords extends ChangeNotifier
     String wordslistKey="wordslist"+wordlength.toString();
     List<int> removeindex=[];
     bool isChecked = prefs.getBool("isChecked")??true;
-    // print("isChecked is "+isChecked.toString());
     for(int i=0;i<lastWordparts.length;i++)
     {
       if(lastWordparts[i]=="्"){lastWordparts[i-1]=lastWordparts[i-1]+"्";
       removeindex.add(i);}
     }
-    // print(removeindex);
     removeindex.sort((a, b) => b.compareTo(a));
-    // print(removeindex);
     removeindex.forEach((el){lastWordparts.removeAt(el);});
-    // print(lastWordparts);
     bool isOvwel=lastWordparts.any((element) => vowels.contains(element));
     bool isConsonant=lastWordparts.any((element) => consonants.contains(element));
     bool ishalfOvwel=lastWordparts.any((element) => halfvowels.contains(element));
     bool ishalfConsonant=lastWordparts.any((element) => halfConsonants.contains(element));
-    // print(isChecked);
-    // print(wordnum);
-    // print(letternum);
     if(last=="")//(wordnum==0 && letternum==0 && last=="")
     {
-      print(321);
       wordslists[wordnum][letternum]=entry;
       prefs.setBool("isChecked", false);
       allentries(entry);
     }
     else if(isOvwel)
     {
-      print(2);
       if(wordnum<5 && letternum<wordlength-1)
       {
         letternum+=1;
@@ -265,7 +241,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking Of the Before Word !");
-        print("please Complete the Checking Of the Before Word !");
       }
       else if(wordnum==5 && letternum<wordlength-1)
       {
@@ -284,25 +259,18 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking of before word");
-        print("please Complete the Checking of before word");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
         chancesCompleted(context);
-       print("Chances are Completed for this Day");
       }
       else{
         checkConditionAndShowToast(context, "Something went Wrong!");
-        print("Something went Wrong!");
         }
     }
     else if(isConsonant)
     {
-      print(321);
-      // print(isChecked);
-      // print(wordnum);
-      // print(letternum);
       if(wordnum<5 && letternum<wordlength-1)
       {
         letternum+=1;
@@ -312,7 +280,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking Of the Before Word !");
-        print("please Complete the Checking Of the Before Word !");
       }
       else if(wordnum<5 && letternum==wordlength-1 && isChecked)
       {
@@ -330,27 +297,22 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking Of the Before Word !");
-        print("please Complete the Checking of before word");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         chancesCompleted(context);
-       print("Chances are Completed for this Day");
       }
-      else print("Something went Wrong!");
+      else checkConditionAndShowToast(context,"Something went Wrong!");
     }
     else if(ishalfConsonant || ishalfOvwel)
     {
       checkConditionAndShowToast(context, "Not Possible like this !");
-      print("Not Possible like this!");
     }
   await prefs.setString(wordslistKey, jsonEncode(wordslists));
   await prefs.setInt(wordnumkey, wordnum);
   await prefs.setInt(letternumkey, letternum);
-  print("isChecked is "+isChecked.toString());
   //data updated here
   notifyListeners();
-  // print(wordslists);
     return;
   }
 
@@ -365,7 +327,6 @@ class Listofwords extends ChangeNotifier
     String wordslistKey="wordslist"+wordlength.toString();
     bool isChecked=prefs.getBool("isChecked")??true;
     List<int> removeindex=[];
-    // print("isChecked is "+isChecked.toString());
     for(int i=0;i<lastWordparts.length;i++)
     {
       if(lastWordparts[i]=="्"){lastWordparts[i-1]=lastWordparts[i-1]+"्";
@@ -394,7 +355,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Check the Before word !");
-        print("please Check the Before word !");
       }
       else if(wordnum<5 && letternum==wordlength-1 && isChecked)
       {
@@ -413,18 +373,15 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Check the Before word !");
-        print("please Check the Before word !");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this day");
-        print("Chances are Completed for this day");
       }
       else
       {
         checkConditionAndShowToast(context, "Some thing Went wrong");
-        print("Some thing Went wrong");
       }
     }
     else if(isConsonant)
@@ -438,7 +395,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Check the Before word !");
-        print("please Check the Before word !");
       }
       else if(wordnum<5 && letternum==wordlength-1 && isChecked)
       {
@@ -457,18 +413,15 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Check the Before word !");
-        print("please Check the Before word !");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this day");
-        print("Chances are Completed for this day");
       }
       else
       {
         checkConditionAndShowToast(context, "Some thing Went wrong");
-         print("Some thing Went wrong");
       }
     }
     else if(ishalfOvwel && ishalfConsonant)
@@ -498,9 +451,7 @@ class Listofwords extends ChangeNotifier
     else 
     {
       checkConditionAndShowToast(context, "Something went wrong!");
-      print("Something went wrong!");
     }
-    print("isChecked is "+isChecked.toString());
     await prefs.setString(wordslistKey, jsonEncode(wordslists));
     await prefs.setInt(wordnumkey, wordnum);
     await prefs.setInt(letternumkey, letternum);
@@ -520,7 +471,6 @@ class Listofwords extends ChangeNotifier
     String wordslistKey="wordslist"+wordlength.toString();
     List<int> removeindex=[];
     bool isChecked=prefs.getBool("isChecked")??true;
-    // print("isChecked is "+isChecked.toString());
     for(int i=0;i<lastWordparts.length;i++)
     {
       if(lastWordparts[i]=="्"){lastWordparts[i-1]=lastWordparts[i-1]+"्";
@@ -549,7 +499,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "Not Possible !");
-        print("Not Possible !");
       }
       else if(wordnum==5 && letternum<wordlength-1)
       {
@@ -568,18 +517,15 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking of before word");
-        print("please Complete the Checking of before word");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-        print("Chances are Completed for this Day");
       }
       else 
       {
         checkConditionAndShowToast(context, "Something went Wrong!");
-        print("Something went Wrong!");
       }
     }
     else if(isConsonant)
@@ -611,12 +557,10 @@ class Listofwords extends ChangeNotifier
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else 
       {
         checkConditionAndShowToast(context, "Something went Wrong!");
-        print("Something went Wrong!");
       }
     }
 
@@ -649,26 +593,21 @@ class Listofwords extends ChangeNotifier
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else 
       {
         checkConditionAndShowToast(context, "Something went Wrong!");
-        print("Something went Wrong!");
       }
     }
     else 
     {
       checkConditionAndShowToast(context, "Something went Wrong!");
-      print("Something went Wrong!");
     }
     await prefs.setString(wordslistKey, jsonEncode(wordslists));
     await prefs.setInt(wordnumkey, wordnum);
     await prefs.setInt(letternumkey, letternum);
     //data updated here
-    print("isChecked is "+isChecked.toString());
     notifyListeners();
-    // print(wordslists);
     return;
   }
 
@@ -687,7 +626,6 @@ class Listofwords extends ChangeNotifier
     bool ishalfConsonant=lastWordparts.any((element)=>halfConsonants.contains(element));
     bool isChecked=prefs.getBool("isChecked")??true;
     List<int> removeindex=[];
-    // print("isChecked is "+isChecked.toString());
     for(int i=0;i<lastWordparts.length;i++)
     {if(lastWordparts[i]=="्"){lastWordparts[i-1]=lastWordparts[i-1]+"्";removeindex.add(i);}}
     removeindex.sort((a, b) => b.compareTo(a));
@@ -712,7 +650,6 @@ class Listofwords extends ChangeNotifier
       else if(wordnum<5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "Not Possible!");
-        print("Not Possible!");
       }
       else if(wordnum==5 && letternum<wordlength-1)
       {
@@ -730,18 +667,15 @@ class Listofwords extends ChangeNotifier
       else if(wordnum==5 && letternum==wordlength-1 && !isChecked)
       {
         checkConditionAndShowToast(context, "please Complete the Checking of before word");
-        print("please Complete the Checking of before word");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else 
       {
         checkConditionAndShowToast(context, "Something went Wrong!");
-        print("Something went Wrong!");
       }
     }
     //if last cell has a consonant with half vowel
@@ -769,15 +703,12 @@ class Listofwords extends ChangeNotifier
         {
           chancesCompleted(context);
           checkConditionAndShowToast(context, "Chances are Completed for this day");
-          print("Chances are Completed for this day");
         }
       }
     }
 
-    //if last letter is only cosonants
     else if(isConsonant && !ishalfOvwel)
     {
-      print(3);
       if(wordnum<5 && letternum<wordlength-1)
       {
         wordslists[wordnum][letternum]+=entry;
@@ -785,7 +716,6 @@ class Listofwords extends ChangeNotifier
       }
       else if(wordnum<5 && letternum<=wordlength-1 && !isChecked)
       {
-        print(2);
         wordslists[wordnum][letternum]+=entry;
         allentries(entry);
       }
@@ -809,12 +739,10 @@ class Listofwords extends ChangeNotifier
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else
       {
         checkConditionAndShowToast(context, "Something went Wrong!");
-         print("Something went Wrong!");
       }
     }
     else if(ishalfConsonant)
@@ -846,12 +774,10 @@ class Listofwords extends ChangeNotifier
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else
       {
         checkConditionAndShowToast(context, "Something went wrong");
-        print("Something went wrong !");
       }
     }
 
@@ -884,20 +810,16 @@ class Listofwords extends ChangeNotifier
       {
         chancesCompleted(context);
         checkConditionAndShowToast(context, "Chances are Completed for this Day");
-       print("Chances are Completed for this Day");
       }
       else
       {
         checkConditionAndShowToast(context, "Something went wrong");
-        print("Something went wrong !");
       }
     }
     else
       {
         checkConditionAndShowToast(context, "Something went wrong");
-        print("Something went wrong !");
       }
-    print("isChecked is "+isChecked.toString());
     await prefs.setString(wordslistKey, jsonEncode(wordslists));
     await prefs.setInt(wordnumkey, wordnum);
     await prefs.setInt(letternumkey, letternum);
@@ -923,14 +845,12 @@ class Listofwords extends ChangeNotifier
       }
       removeOttu.sort((a, b) => b.compareTo(a));
       removeOttu.forEach((el){letterSplit.removeAt(el);});
-      // print(letterSplit);
       userwordParts.add(letterSplit);
     }
-    // print(userwordParts);
   }
 
   checkthewords(BuildContext context) async
-  {
+  { 
     // winningDialogue(context);
     SharedPreferences prefs=await SharedPreferences.getInstance();
     int wordlength=prefs.getInt("wordlength")??1;
@@ -945,7 +865,6 @@ class Listofwords extends ChangeNotifier
     List<int> removeindex=[];
     String isgotAnswerKey="isgotAnswer"+wordlength.toString();
     bool isgotAnswer = prefs.getBool(isgotAnswerKey)??false;
-    print(isgotAnswer);
     if(isgotAnswer)
     {
       winningDialogue(context);
@@ -959,7 +878,6 @@ class Listofwords extends ChangeNotifier
     bool isOvwel=lastWordparts.any((element) => vowels.contains(element));
     bool isConsonant=lastWordparts.any((element) => consonants.contains(element));
     bool isChecked=prefs.getBool("isChecked")??true;
-    // print("isChecked is "+isChecked.toString());
     if(letternum==wordlength-1 && letternum!=0)
     {
       if(isOvwel || isConsonant)
@@ -982,23 +900,19 @@ class Listofwords extends ChangeNotifier
       }
       else
       {
-        print("Word Must Contain any Vowels or Consonants at the end");
+        checkConditionAndShowToast(context,"Word Must Contain any Vowels or Consonants at the end");
         return;
       }
     }
     else{
       checkConditionAndShowToast(context, "Complete your Word!");
-      print("Complete your Word!");
       return;
     }
-    // print(colorsOfCells[wordnum].runtimeType);
     isgotAnswer=colorsOfCells[wordnum].every((ele)=>ele==correctcellColor);
-    print(isgotAnswer);
     if(isgotAnswer) prefs.setBool(isgotAnswerKey, isgotAnswer);
     List<List<int>> colorValues = colorsOfCells.map((innerList) =>innerList.map((color) => color.value).toList()).toList();
     prefs.setString(colorCellsListKey,jsonEncode(colorValues));
     prefs.setBool("isChecked", true);
-    print("isChecked is "+isChecked.toString());
     notifyListeners();
   }
 
@@ -1020,7 +934,6 @@ class Listofwords extends ChangeNotifier
     }
     removeOttu.sort((a, b) => b.compareTo(a));
     removeOttu.forEach((el){correctoneParts.removeAt(el);});
-    // print(correctoneParts);
     List<dynamic> correctWord=[];
     List<String> samyuklis=[];
     List<String> vowellis=[];
@@ -1032,13 +945,11 @@ class Listofwords extends ChangeNotifier
       bool ispartishalfConsonant= halfConsonants.contains(correctoneParts[i]);
       if(ispartisOvwel)
       {
-        // print(correctWord);
         vowellis.add(correctoneParts[i]);
         correctWord.add(vowellis);
       }
       else if(ispartisConsonant)
       {
-        // print(correctWord);
         samyuklis.add(correctoneParts[i]);
         if(i<correctoneParts.length-1)
         {
@@ -1052,9 +963,10 @@ class Listofwords extends ChangeNotifier
             correctWord.add(samyuklis);
             samyuklis=[];
           }
-          else if(halfConsonants.contains(correctoneParts[i+1])){print("Next word started");}
-          else if(halfvowels.contains(correctoneParts[i+1])){print("same word Continued");}
-          else{print("something Happened");}
+          else if(halfConsonants.contains(correctoneParts[i+1])){}
+          else if(halfvowels.contains(correctoneParts[i+1])){}
+          else{
+            }
         }
         else if(i==correctoneParts.length-1)
         {
@@ -1065,21 +977,16 @@ class Listofwords extends ChangeNotifier
 
       }
       else if(ispartishalfConsonant)
-      {
-        print(correctWord);
-        samyuklis.add(correctoneParts[i]);
+      {        samyuklis.add(correctoneParts[i]);
       }
       else if(ispartisHalfOvwel)
       {
-        // print(correctWord);
         samyuklis.add(correctoneParts[i]);
         correctWord.add(samyuklis);
         samyuklis=[];
       }
       else
       {
-        // print(correctWord);
-        print("something else!");
       }
     }
     for(List<String> i in correctWord)
@@ -1119,10 +1026,12 @@ class Listofwords extends ChangeNotifier
       {
         if(n<(correctword[m].length-1)) samyukta+=correctword[m][n];
         else if(n==correctword[m].length-1){samyukta+=correctword[m][n]; correctWordFlat.add(samyukta);samyukta="";}
-        else print("something went wrong !");
+        else {}
       }
       else if(correctword[m].length==0) correctWordFlat.add(correctword[m][n]);
-      else print("Something else happend !");
+      else {
+        // print("Something else happend !");
+        }
     }
   }
   for(int m=0;m<userword.length;m++)
@@ -1133,10 +1042,14 @@ class Listofwords extends ChangeNotifier
       {
         if(n<(userword[m].length-1)) samyukta+=userword[m][n];
         else if(n==userword[m].length-1){samyukta+=userword[m][n]; userWordFlat.add(samyukta);samyukta="";}
-        else print("something went wrong !");
+        else {
+          // print("something went wrong !");
+          }
       }
       else if(userword[m].length==0) userWordFlat.add(userword[m][n]);
-      else print("Something else happend !");
+      else {
+        // print("Something else happend !");
+        }
     }
   }
 
@@ -1145,14 +1058,14 @@ class Listofwords extends ChangeNotifier
     if(userWordFlat[l]==correctWordFlat[l]) boolsOfMatching.add("Code :: Green");
     else if(correctWordFlat.contains(userWordFlat[l])) boolsOfMatching.contains("code :: Orange");
     else if(!correctWordFlat.contains(userWordFlat[l])) boolsOfMatching.add("Code :: Gray");
-    else print("Went Wrong!"); 
+    else{
+      //  print("Went Wrong!");
+       }
   }
-  print(boolsOfMatching);
   }
 
-  removelastEntry() async
+  removelastEntry(BuildContext context) async
   {
-    // print("The next Period");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int wordlength=prefs.getInt("wordlength")??3;
     String wordnumkey="wordnum"+wordlength.toString();
@@ -1162,13 +1075,10 @@ class Listofwords extends ChangeNotifier
     int letternum=prefs.getInt(letternumKey)??0;
     String allentriesKey="allentries"+wordlength.toString();
     List<String> allentries=prefs.getStringList(allentriesKey)??[];
-    // print("The all Entries are "+allentries.toString());
     int lastIndex=allentries.length-1;
     if(lastIndex<0) lastIndex=0;
-    if(allentries.length==0){print("There is no single entry here !"); return;}
+    if(allentries.length==0) return;
     String DeletingWord=allentries[lastIndex];
-    // print("Deleting Word is : "+DeletingWord.toString());
-    // print("All Entries are : "+allentries.toString());
     bool deletingIsVowel = vowels.contains(DeletingWord);
     bool deletingIsConsonant = consonants.contains(DeletingWord);
     bool deletingIsHalfConsonant = halfConsonants.contains(DeletingWord);
@@ -1183,25 +1093,14 @@ class Listofwords extends ChangeNotifier
     }
     removeindex.sort((a, b) => b.compareTo(a));
     removeindex.forEach((el){LastWordParts.removeAt(el);});
-    // print(allentries);
-    // print(wordslists);
-    // print(LastWordParts);
-    // print(wordslists[wordnum][letternum].runtimeType);
     bool lastIsVowel=LastWordParts.any((element) => vowels.contains(element));
     bool lastIsConsonant=LastWordParts.any((element) => consonants.contains(element));
-    bool lastIsHalfVowel=LastWordParts.any((element) => halfvowels.contains(element));
-    bool lastIsHalfConsonants=LastWordParts.any((element) => halfConsonants.contains(element));
-    // print(LastWordParts);
-    // print(allentries);
-    // print(wordslists);
-    // print(lastIsVowel);
-    // print(lastIsConsonant);
     if((letternum==wordlength-1 && (lastIsConsonant || lastIsVowel) && isChecked))
     {
-      print("Before word is alreadyu Checked!");
+      checkConditionAndShowToast(context,"Before word is alreadyu Checked!");
       return;
     }
-    if(wordnum==0 && letternum==0 && wordslists[wordnum][letternum]=="") print("Nothing to delete");
+    if(wordnum==0 && letternum==0 && wordslists[wordnum][letternum]=="") checkConditionAndShowToast(context,"Nothing to delete");
     else if(deletingIsVowel)
     {
       if(wordnum<5 && letternum<wordlength-1)
@@ -1210,10 +1109,6 @@ class Listofwords extends ChangeNotifier
         letternum-=1;
         if(letternum<0)letternum=0;
         if(allentries.length>=1)allentries.removeAt(allentries.length-1);
-        // if(letternum==0 && wordslists[wordnum][letternum]=="")
-        // {
-        //   prefs.setBool("isChecked", true);
-        // }
       }
       else if(wordnum<=5 && letternum==wordlength-1 && !isChecked)
       {
@@ -1221,20 +1116,16 @@ class Listofwords extends ChangeNotifier
         letternum-=1;
         if(letternum<0)letternum=0;
         if(allentries.length>=1)allentries.removeAt(allentries.length-1);
-        // if(letternum==0 && wordslists[wordnum][letternum]=="")
-        // {
-        //   prefs.setBool("isChecked", true);
-        // }
       }
       else if(wordnum<5 && letternum==wordlength-1 && isChecked)
       {
-        print("Word is already Checked, No");
+        checkConditionAndShowToast(context,"Word is already Checked, No");
       }
       else if(wordnum==5 && letternum==wordlength-1 && isChecked)
       {
-        print("This Game is Completed!");
+        checkConditionAndShowToast(context,"This Game is Completed!");
       }
-      else print("Something went Wrong!");
+      else checkConditionAndShowToast(context,"Something went Wrong!");
     }
     else if(deletingIsHalfConsonant || deletingIsHalfVowel || deletingIsConsonant)
     {
@@ -1246,10 +1137,6 @@ class Listofwords extends ChangeNotifier
             letternum-=1;
             if(letternum<0)letternum=0;
             if(allentries.length>=1)allentries.removeAt(allentries.length-1);
-            // if(letternum==0 && wordslists[wordnum][letternum]=="")
-            // {
-            //   prefs.setBool("isChecked", true);
-            // }
           }
           else if(LastWordParts.length>1)
           {
@@ -1260,36 +1147,21 @@ class Listofwords extends ChangeNotifier
             if(letternum<0)letternum=0;
             if(allentries.length>=1)
             {
-              print("Enter !");
               allentries.removeAt(allentries.length-1);
             }
-            // if(letternum==0 && wordslists[wordnum][letternum]=="")
-            // {
-            //   prefs.setBool("isChecked", true);
-            // }
           }
-          else print("Out of Contex");
+          else checkConditionAndShowToast(context,"Out of Contex");
         }
-        else if(!isChecked) print("Please Complete the Checking of before word!");
-        else if(wordnum==5 && isChecked) print("Chances are Completed For This day!");
-        else print("Something went Wrong");
+        else if(!isChecked) checkConditionAndShowToast(context,"Please Complete the Checking of before word!");
+        else if(wordnum==5 && isChecked) checkConditionAndShowToast(context,"Chances are Completed For This day!");
+        else checkConditionAndShowToast(context,"Something went Wrong");
     }
-    else print("Something is wrong!");
-  
-    // print(letternumKey);
-    // print(wordnumkey);
-    // print(letternum);
-    // print(wordnum);
-    // print(allentries);
-    // print(wordslists);
-    // print(LastWordParts);
-    print("isChecked is "+isChecked.toString());
+    else checkConditionAndShowToast(context,"Something is wrong!");
+
     gridcellForming();
     prefs.setInt(letternumKey,letternum);
     prefs.setInt(wordnumkey,wordnum);
     prefs.setStringList(allentriesKey, allentries);
-    // print("The wordslists Key are : "+wordslistsKey.toString());
-    // print("The Words are : "+wordslists.toString());
     prefs.setString(wordslistsKey,jsonEncode(wordslists));
     prefs.setInt(letternumKey,letternum);
     notifyListeners();
